@@ -10,6 +10,7 @@ const validateResource =
 				body: req.body,
 				params: req.params,
 				query: req.query,
+				files: req.files,
 			});
 			next();
 		} catch (error: any) {

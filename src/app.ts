@@ -1,24 +1,34 @@
 import * as dotenv from "dotenv";
+const cloudinary = require("cloudinary").v2;
 dotenv.config();
 import "express-async-errors";
 import express, { Response, Request } from "express";
 import mongoose from "mongoose";
-import bodyParser from "body-parser";
 import morgan from "morgan";
 import cookieParser from "cookie-parser";
+import fileUpload from "express-fileupload";
 // local imports
 
 const app = express();
 //routes imports
 import authRouter from "./routes/authRoutes";
 import userRoutes from "./routes/userRoutes";
+import productRoutes from "./routes//productRoutes";
 import errorHanlerMiddleware from "./middlewares/default-errorHandler";
+
+// cloudinary config
+cloudinary.config({
+	cloud_name: "dolgpezth",
+	api_key: "883425872941863",
+	api_secret: "tzCe1vngglwHKbJgZWzx2pq6jmg",
+});
 
 // middlewares
 app.use(morgan("tiny"));
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser("MbQeThWmZq4t7w!z%C*F-J@NcRfUjXn2"));
+app.use(express.json({ type: "" }));
+app.use(fileUpload({ useTempFiles: true }));
+app.use(express.urlencoded({ extended: false }));
 
 app.get("/", (req: Request, res: Response) => {
 	res.send("home");
@@ -26,6 +36,8 @@ app.get("/", (req: Request, res: Response) => {
 
 app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/users", userRoutes);
+app.use("/api/v1/products", productRoutes);
+
 app.use(errorHanlerMiddleware);
 const PORT = process.env.PORT || 3000;
 
