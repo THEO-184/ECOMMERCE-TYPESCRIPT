@@ -9,6 +9,7 @@ import {
 } from "../controllers/productController";
 import { authorizePermissions } from "../utils/permissions";
 import { UserRoles } from "../types/typeDefinitions";
+import { getReviewsOnProduct } from "../controllers/reviewController";
 
 const router = Router();
 
@@ -33,4 +34,5 @@ router
 		authorizePermissions(UserRoles.admin),
 		deleteProductHandler
 	);
+router.route("/:id/reviews").get(getReviewsOnProduct);
 export default router;

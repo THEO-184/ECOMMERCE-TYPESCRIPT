@@ -24,7 +24,6 @@ export const loginHandler = async (
 		throw new BadRequest("provide email and password");
 	}
 	const user = await loginUser({ email });
-	console.log(user);
 	if (!user) {
 		throw new UnAuthenticated("user not authenticated");
 	}

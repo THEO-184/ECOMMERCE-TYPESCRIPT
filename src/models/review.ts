@@ -42,8 +42,8 @@ ReviewSchema.index({ product: 1, user: 1 }, { unique: true });
 
 ReviewSchema.static(
 	"calculateAvgRating",
-	async function calculateAvgRating(productId: string) {
-		const result: any[] = await this.aggregate([
+	async function calculateAvgRating(productId: any) {
+		const result: any = await this.aggregate([
 			{ $match: { product: productId } },
 			{ $project: { _id: 0, rating: 1 } },
 			{
@@ -55,10 +55,11 @@ ReviewSchema.static(
 			},
 		]);
 		return result;
+		// console.log(result);
 	}
 );
 
-ReviewSchema.pre("save", async function () {
+ReviewSchema.post("save", async function () {
 	const reviewUpdate = await Review.calculateAvgRating(this.product);
 	await this.$model("Product").findOneAndUpdate(
 		{ _id: this.product },
@@ -67,10 +68,19 @@ ReviewSchema.pre("save", async function () {
 			numOfReviews: reviewUpdate[0].numOfReviews || 0,
 		}
 	);
+	console.log(reviewUpdate);
 });
 
-ReviewSchema.post("remove", async function () {
-	await Review.calculateAvgRating(this.product);
+ReviewSchema.pre("remove", async function () {
+	const reviewUpdate = await Review.calculateAvgRating(this.product);
+	await this.$model("Product").findOneAndUpdate(
+		{ _id: this.product },
+		{
+			averageRating: reviewUpdate[0].averageRating || 0,
+			numOfReviews: reviewUpdate[0].numOfReviews || 0,
+		}
+	);
+	console.log(reviewUpdate);
 });
 
 const Review = model<ReviewModelType, ReviewStaticsType>(

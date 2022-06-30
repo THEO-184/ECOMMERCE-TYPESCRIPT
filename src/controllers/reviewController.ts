@@ -88,3 +88,15 @@ export const deleteReview: RequestHandler<{ id: string }> = async (
 	await review.remove();
 	res.status(StatusCodes.OK).json({ msg: `review with id : ${req.params.id}` });
 };
+
+export const getReviewsOnProduct: RequestHandler<{ id: string }> = async (
+	req,
+	res
+) => {
+	const reviews = await Review.find({ product: req.params.id });
+	if (!reviews) {
+		throw new NotFound(`no review with id : ${req.params.id}`);
+	}
+
+	res.status(StatusCodes.OK).json({ count: reviews.length, reviews });
+};
