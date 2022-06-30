@@ -79,5 +79,7 @@ export interface ReviewModelType extends mongoose.Document {
 }
 
 export interface ReviewStaticsType extends mongoose.Model<ReviewModelType> {
-	calculateAvgRating(id: string): void;
+	calculateAvgRating(
+		id: string
+	): [{ id: any; numOfReviews: number; averageRating: number }];
 }

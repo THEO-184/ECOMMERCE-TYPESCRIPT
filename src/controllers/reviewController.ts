@@ -1,3 +1,4 @@
+import { checkPersmission } from "./../utils/permissions";
 import { StatusCodes } from "http-status-codes";
 import { ReviewModelType } from "./../types/typeDefinitions";
 import { RequestHandler } from "express";
@@ -72,4 +73,18 @@ export const updateReview: RequestHandler<
 	res
 		.status(StatusCodes.OK)
 		.json({ msg: `review with id ${id} successfully updated` });
+};
+
+export const deleteReview: RequestHandler<{ id: string }> = async (
+	req,
+	res
+) => {
+	const review = await Review.findOne({ _id: req.params.id });
+	if (!review) {
+		throw new NotFound(`no review with id : ${req.params.id} was found`);
+	}
+
+	checkPersmission(req.user, { id: review.user });
+	await review.remove();
+	res.status(StatusCodes.OK).json({ msg: `review with id : ${req.params.id}` });
 };

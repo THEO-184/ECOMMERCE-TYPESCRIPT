@@ -13,6 +13,7 @@ export const authMiddleware: ExpressRequest = (req, res, next) => {
 			token,
 			"MbQeThWmZq4t7w!z%C*F-J@NcRfUjXn2"
 		) as PayloadType;
+
 		req.user = {
 			name: decoded.name,
 			userId: decoded._id,

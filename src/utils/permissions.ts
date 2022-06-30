@@ -1,10 +1,11 @@
 import { NextFunction, RequestHandler } from "express";
 import { Unauthorized } from "../errors";
+import { UserRoles } from "../types/typeDefinitions";
 
 export const authorizePermissions =
-	(...roles: string[]): RequestHandler =>
+	(...roles: UserRoles[]): RequestHandler =>
 	(req, res, next) => {
-		if (!roles.includes(req.user.role)) {
+		if (!roles.includes(req.user.role as UserRoles)) {
 			throw new Unauthorized("user not authorized to access this resource");
 		}
 		next();

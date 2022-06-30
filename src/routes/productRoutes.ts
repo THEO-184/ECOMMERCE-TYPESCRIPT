@@ -8,17 +8,29 @@ import {
 	deleteProductHandler,
 } from "../controllers/productController";
 import { authorizePermissions } from "../utils/permissions";
+import { UserRoles } from "../types/typeDefinitions";
 
 const router = Router();
 
 router
 	.route("/")
-	.post([authMiddleware, authorizePermissions("admin")], createProductHandler)
+	.post(
+		[authMiddleware, authorizePermissions(UserRoles.admin)],
+		createProductHandler
+	)
 	.get(getAllProductsHandler);
 
 router
 	.route("/:id")
 	.get(getSingleProduct)
-	.patch(authMiddleware, authorizePermissions("admin"), updateProductHandler)
-	.delete(authMiddleware, authorizePermissions("admin"), deleteProductHandler);
+	.patch(
+		authMiddleware,
+		authorizePermissions(UserRoles.admin),
+		updateProductHandler
+	)
+	.delete(
+		authMiddleware,
+		authorizePermissions(UserRoles.admin),
+		deleteProductHandler
+	);
 export default router;
