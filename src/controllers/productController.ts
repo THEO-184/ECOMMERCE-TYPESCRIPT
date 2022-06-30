@@ -54,7 +54,7 @@ export const getSingleProduct: RequestHandler<{ id: string }> = async (
 ) => {
 	const product = await findProduct(req.params.id);
 	if (!product) {
-		throw new NotFound(`no user found with id: ${req.params.id}`);
+		throw new NotFound(`no product found with id: ${req.params.id}`);
 	}
 	res.status(StatusCodes.OK).json({ product });
 };

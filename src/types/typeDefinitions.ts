@@ -28,7 +28,6 @@ export type PayloadType = Pick<UserModelType, "_id" | "role" | "name">;
 export type ExpressRequest = RequestHandler<{ id: string }>;
 
 // type for CloudinaryFileService
-
 export interface cloudinaryType {
 	uploader: {
 		upload: (
@@ -67,4 +66,18 @@ export interface ProductModelType extends mongoose.Document {
 	averageRating: number;
 	numOfReviews: number;
 	user: UserModelType["_id"];
+}
+
+// review
+
+export interface ReviewModelType extends mongoose.Document {
+	rating: number;
+	title: string;
+	comment: string;
+	user: UserModelType["_id"];
+	product: ProductModelType["_id"];
+}
+
+export interface ReviewStaticsType extends mongoose.Model<ReviewModelType> {
+	calculateAvgRating(id: string): void;
 }

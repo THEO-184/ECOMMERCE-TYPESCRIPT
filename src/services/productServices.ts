@@ -3,7 +3,9 @@ import ProductModel from "../models/product";
 import { ProductModelType } from "../types/typeDefinitions";
 
 export const findProduct = async (id: string) =>
-	await ProductModel.findOne({ _id: id });
+	await ProductModel.findOne({ _id: id })
+		.populate("user", "id name role")
+		.populate("reviews");
 
 export const updateProduct = async (
 	id: string,

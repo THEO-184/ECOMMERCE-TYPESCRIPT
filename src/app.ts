@@ -13,7 +13,8 @@ const app = express();
 //routes imports
 import authRouter from "./routes/authRoutes";
 import userRoutes from "./routes/userRoutes";
-import productRoutes from "./routes//productRoutes";
+import productRoutes from "./routes/productRoutes";
+import reviewRoutes from "./routes/reviewRoutes";
 import errorHanlerMiddleware from "./middlewares/default-errorHandler";
 
 // cloudinary config
@@ -37,6 +38,7 @@ app.get("/", (req: Request, res: Response) => {
 app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/users", userRoutes);
 app.use("/api/v1/products", productRoutes);
+app.use("/api/v1/reviews", reviewRoutes);
 
 app.use(errorHanlerMiddleware);
 const PORT = process.env.PORT || 3000;
