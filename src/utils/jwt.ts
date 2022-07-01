@@ -1,10 +1,11 @@
 import { UserModelType, PayloadType } from "../types/typeDefinitions";
-import jwt from "jsonwebtoken";
+import jwt, { Secret } from "jsonwebtoken";
 import { Response } from "express";
 
+const secret: Secret = process.env.JWT_SECRET!;
 export const createToken = (payload: PayloadType) => {
-	const data = jwt.sign(payload, "MbQeThWmZq4t7w!z%C*F-J@NcRfUjXn2", {
-		expiresIn: "1d",
+	const data = jwt.sign(payload, secret, {
+		expiresIn: process.env.JWT_LIFETIME,
 	});
 	return data;
 };

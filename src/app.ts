@@ -1,6 +1,6 @@
-import * as dotenv from "dotenv";
-const cloudinary = require("cloudinary").v2;
+import dotenv from "dotenv";
 dotenv.config();
+const cloudinary = require("cloudinary").v2;
 import "express-async-errors";
 import express, { Response, Request } from "express";
 import mongoose from "mongoose";
@@ -20,14 +20,14 @@ import errorHanlerMiddleware from "./middlewares/default-errorHandler";
 
 // cloudinary config
 cloudinary.config({
-	cloud_name: "dolgpezth",
-	api_key: "883425872941863",
-	api_secret: "tzCe1vngglwHKbJgZWzx2pq6jmg",
+	cloud_name: process.env.CLOUD_NAME,
+	api_key: process.env.CLOUD_APIKEY,
+	api_secret: process.env.CLOUD_SECRET,
 });
 
 // middlewares
 app.use(morgan("tiny"));
-app.use(cookieParser("MbQeThWmZq4t7w!z%C*F-J@NcRfUjXn2"));
+app.use(cookieParser(process.env.JWT_SECRET));
 app.use(express.json({ type: "" }));
 app.use(fileUpload({ useTempFiles: true }));
 app.use(express.urlencoded({ extended: false }));
@@ -43,16 +43,14 @@ app.use("/api/v1/reviews", reviewRoutes);
 app.use("/api/v1/orders", orderRoutes);
 
 app.use(errorHanlerMiddleware);
-const PORT = process.env.PORT || 3000;
 
+const MONGO_URI = process.env.MONGO_URI!;
 // start server
 const start = async () => {
 	try {
-		await mongoose.connect(
-			"mongodb+srv://Theo:effa8KISSI7@nodeexpressproject.eemhb.mongodb.net/Final-Ecommerce?retryWrites=true&w=majority"
-		);
-		app.listen(3000, () => {
-			console.log(`server running on ${PORT}`);
+		await mongoose.connect(MONGO_URI);
+		app.listen(process.env.PORT, () => {
+			console.log(`server running on ${process.env.PORT}`);
 		});
 	} catch (error) {
 		console.log(error);
