@@ -1,3 +1,4 @@
+import { sendVerificationEmail } from "./../utils/sendVerificationEmail";
 import { StatusCodes } from "http-status-codes";
 import crypto from "crypto";
 import { attachCookies } from "./../utils/jwt";
@@ -6,6 +7,7 @@ import { loginUser, registerUser } from "../services/userServices";
 import { loginUserType, resgisterUserType } from "../schema/authSchema";
 import { BadRequest, NotFound, UnAuthenticated } from "../errors";
 import UserModel from "../models/user";
+import { sendEmail } from "../utils/sendEmail";
 
 export const registerUserHandler = async (
 	req: Request<{}, {}, resgisterUserType["body"]>,
@@ -21,13 +23,21 @@ export const registerUserHandler = async (
 		password,
 		verificationToken,
 	});
+
+	const origin = "http://localhost:3001";
+
+	await sendVerificationEmail({
+		name: user.email,
+		email: user.email,
+		verificationToken: user.verificationToken,
+		origin,
+	});
 	// const { email, role, name, _id } = user;
 	// attachCookies(res, { _id, role, name });
 	// res.status(StatusCodes.CREATED).json({ user: { email, role, name } });
 
 	res.status(StatusCodes.CREATED).json({
 		msg: "account succesfully created.please confirm your email for verification",
-		verificationToken: user.verificationToken,
 	});
 };
 

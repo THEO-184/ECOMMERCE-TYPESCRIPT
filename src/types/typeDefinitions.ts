@@ -1,3 +1,4 @@
+import { TypeOf } from "zod";
 import mongoose from "mongoose";
 import { Request, RequestHandler } from "express";
 declare module "express-serve-static-core" {
@@ -7,6 +8,7 @@ declare module "express-serve-static-core" {
 	}
 }
 
+// image file
 export interface ImageType {
 	name: string;
 	data?: any;
@@ -16,6 +18,15 @@ export interface ImageType {
 	mimetype: string;
 	md5?: any;
 	mv: Function;
+}
+
+// send verification email input Type
+
+export interface SendVerificationType {
+	name: string;
+	email: string;
+	verificationToken: string;
+	origin: string;
 }
 
 export enum UserRoles {
