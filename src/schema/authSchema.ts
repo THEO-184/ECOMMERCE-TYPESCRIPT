@@ -1,4 +1,5 @@
-import { object, string, TypeOf } from "zod";
+import { UserRoles } from "./../types/typeDefinitions";
+import { object, string, TypeOf, nativeEnum } from "zod";
 
 export const registerUserSchema = object({
 	body: object({

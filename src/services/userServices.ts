@@ -3,7 +3,9 @@ import UserModel from "../models/user";
 import { UserModelType } from "../types/typeDefinitions";
 
 export const registerUser = async (
-	input: DocumentDefinition<Pick<UserModelType, "email" | "password" | "name">>
+	input: DocumentDefinition<
+		Pick<UserModelType, "email" | "password" | "name" | "verificationToken">
+	>
 ) => {
 	return UserModel.create(input);
 };

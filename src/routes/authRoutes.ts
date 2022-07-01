@@ -3,6 +3,7 @@ import {
 	loginHandler,
 	logoutHandler,
 	registerUserHandler,
+	verifyEmail,
 } from "../controllers/authController";
 import { loginUserSchema, registerUserSchema } from "../schema/authSchema";
 import validateResource from "../utils/validateResource";
@@ -14,5 +15,6 @@ router
 
 router.route("/login").post(validateResource(loginUserSchema), loginHandler);
 router.get("/logout", logoutHandler);
+router.route("/verify-email").post(verifyEmail);
 
 export default router;

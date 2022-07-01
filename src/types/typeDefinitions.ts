@@ -23,6 +23,7 @@ export enum UserRoles {
 	user = "user",
 }
 
+// token payload
 export type PayloadType = Pick<UserModelType, "_id" | "role" | "name">;
 
 export type ExpressRequest = RequestHandler<{ id: string }>;
@@ -45,7 +46,7 @@ export interface UserModelType extends mongoose.Document {
 	role: UserRoles;
 	verificationToken: string;
 	isVerified: boolean;
-	verified: Date;
+	verified: number;
 	passwordToken: string;
 	passwordTokenExpiryDate: Date;
 	comparePassword: (input: string) => Promise<boolean>;
