@@ -7,9 +7,11 @@ import mongoose from "mongoose";
 import morgan from "morgan";
 import cookieParser from "cookie-parser";
 import fileUpload from "express-fileupload";
+import validateEnv from "./utils/validateEnv";
 // local imports
 
 const app = express();
+validateEnv();
 //routes imports
 import authRouter from "./routes/authRoutes";
 import userRoutes from "./routes/userRoutes";
