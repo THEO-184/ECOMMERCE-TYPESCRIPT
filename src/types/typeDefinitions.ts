@@ -83,3 +83,35 @@ export interface ReviewStaticsType extends mongoose.Model<ReviewModelType> {
 		id: string
 	): [{ id: any; numOfReviews: number; averageRating: number }];
 }
+
+// OrderSchema
+
+export enum OrderStatus {
+	paid = "paid",
+	pending = "pending",
+	failed = "failed",
+	cancelled = "cancelled",
+	delivered = "delivered",
+}
+
+export interface SingleOrderType {
+	name: string;
+	image: string;
+	price: number;
+	amount: number;
+	product: ProductModelType["_id"];
+}
+
+export interface OrderType extends mongoose.Document {
+	tax: number;
+	shippingFee: number;
+	subTotal: number;
+	total: number;
+	orderItems: SingleOrderType[];
+	status: OrderStatus;
+	user: UserModelType["_id"];
+	clientSecret: string;
+	paymentIntentId: string;
+}
+
+export type OrderBody = Pick<OrderType, "tax" | "shippingFee" | "orderItems">;

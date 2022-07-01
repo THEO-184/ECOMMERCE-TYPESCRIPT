@@ -15,6 +15,7 @@ import authRouter from "./routes/authRoutes";
 import userRoutes from "./routes/userRoutes";
 import productRoutes from "./routes/productRoutes";
 import reviewRoutes from "./routes/reviewRoutes";
+import orderRoutes from "./routes/orderRoutes";
 import errorHanlerMiddleware from "./middlewares/default-errorHandler";
 
 // cloudinary config
@@ -39,6 +40,7 @@ app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/users", userRoutes);
 app.use("/api/v1/products", productRoutes);
 app.use("/api/v1/reviews", reviewRoutes);
+app.use("/api/v1/orders", orderRoutes);
 
 app.use(errorHanlerMiddleware);
 const PORT = process.env.PORT || 3000;

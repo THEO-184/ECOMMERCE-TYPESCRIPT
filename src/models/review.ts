@@ -68,7 +68,6 @@ ReviewSchema.post("save", async function () {
 			numOfReviews: reviewUpdate[0].numOfReviews || 0,
 		}
 	);
-	console.log(reviewUpdate);
 });
 
 ReviewSchema.pre("remove", async function () {
