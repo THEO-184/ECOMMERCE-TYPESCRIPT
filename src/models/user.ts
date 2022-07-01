@@ -1,9 +1,9 @@
-import { UserModelType } from "./../types/typeDefinitions";
+import { UserModelType, UserRoles } from "./../types/typeDefinitions";
 import mongoose from "mongoose";
 import validator from "validator";
 import bcrypt from "bcryptjs";
 
-const UserSchema = new mongoose.Schema({
+const UserSchema = new mongoose.Schema<UserModelType>({
 	name: {
 		type: String,
 		required: [true, "please provide user name"],
@@ -27,8 +27,8 @@ const UserSchema = new mongoose.Schema({
 	},
 	role: {
 		type: String,
-		enum: ["admin", "user"],
-		default: "user",
+		enum: UserRoles,
+		default: UserRoles.user,
 	},
 	verificationToken: String,
 	isVerified: {
