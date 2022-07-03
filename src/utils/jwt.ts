@@ -4,9 +4,7 @@ import { Response } from "express";
 
 const secret: Secret = process.env.JWT_SECRET!;
 export const createToken = (payload: PayloadType) => {
-	const data = jwt.sign(payload, secret, {
-		expiresIn: process.env.JWT_LIFETIME,
-	});
+	const data = jwt.sign(payload, secret);
 	return data;
 };
 

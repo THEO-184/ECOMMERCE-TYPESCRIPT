@@ -44,19 +44,19 @@ const UserSchema = new mongoose.Schema<UserModelType>({
 	},
 });
 
-UserSchema.pre("save", async function () {
+UserSchema.pre("save", async function (next) {
 	let user = this as UserModelType;
-	if (!user.isModified("password")) return;
+	if (!user.isModified("password")) return next();
 	const salt = await bcrypt.genSalt(10);
 	user.password = await bcrypt.hash(user.password, salt);
+	return next();
 });
 
 UserSchema.methods.comparePassword = async function (
 	password: string
 ): Promise<boolean> {
-	let user = this as UserModelType;
-
-	const isMatched = await bcrypt.compare(password, user.password);
+	// let user = this as UserModelType;
+	const isMatched = await bcrypt.compare(password, this.password);
 	return isMatched;
 };
 

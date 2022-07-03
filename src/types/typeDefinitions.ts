@@ -29,6 +29,13 @@ export interface SendVerificationType {
 	origin: string;
 }
 
+export interface ResetPasswordType {
+	email: string;
+	name: string;
+	passwordToken: string;
+	origin: string;
+}
+
 export enum UserRoles {
 	admin = "admin",
 	user = "user",
