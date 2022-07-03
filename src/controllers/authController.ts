@@ -3,11 +3,16 @@ import { StatusCodes } from "http-status-codes";
 import crypto from "crypto";
 import { attachCookies } from "./../utils/jwt";
 import { Request, RequestHandler, Response } from "express";
-import { loginUser, registerUser } from "../services/userServices";
+import {
+	createRefreshToken,
+	loginUser,
+	registerUser,
+} from "../services/userServices";
 import { loginUserType, resgisterUserType } from "../schema/authSchema";
 import { BadRequest, NotFound, UnAuthenticated } from "../errors";
 import UserModel from "../models/user";
 import { sendEmail } from "../utils/sendEmail";
+import Token from "../models/token";
 
 export const registerUserHandler = async (
 	req: Request<{}, {}, resgisterUserType["body"]>,
@@ -32,9 +37,6 @@ export const registerUserHandler = async (
 		verificationToken: user.verificationToken,
 		origin,
 	});
-	// const { email, role, name, _id } = user;
-	// attachCookies(res, { _id, role, name });
-	// res.status(StatusCodes.CREATED).json({ user: { email, role, name } });
 
 	res.status(StatusCodes.CREATED).json({
 		msg: "account succesfully created.please confirm your email for verification",
@@ -87,13 +89,46 @@ export const loginHandler = async (
 	if (!user.isVerified) {
 		throw new UnAuthenticated("email not verified");
 	}
+
 	const { role, name, _id } = user;
-	attachCookies(res, { _id, role, name });
+
+	// refreshToken
+	let refreshToken = "";
+	let refreshPayload = refreshToken;
+
+	// check for existing token
+	const existingToken = await Token.findOne({ user: user._id });
+	if (existingToken) {
+		const { isValid } = existingToken;
+		if (!isValid) {
+			throw new UnAuthenticated("user not authenticated");
+		}
+		refreshToken = existingToken.refreshToken;
+		refreshPayload = refreshToken;
+		attachCookies(res, { _id, role, name }, refreshPayload);
+		res.status(StatusCodes.OK).json({ user: { email, role, name } });
+		return;
+	}
+	// create token first time
+	refreshToken = crypto.randomBytes(40).toString("hex");
+	const userAgent = req.headers["user-agent"]!;
+	const ip = req.ip;
+	refreshPayload = refreshToken;
+
+	await createRefreshToken({
+		refreshToken,
+		userAgent,
+		ip,
+		user: user._id,
+	});
+
+	attachCookies(res, { _id, role, name }, refreshPayload);
+
 	res.status(StatusCodes.OK).json({ user: { email, role, name } });
 };
 
 export const logoutHandler = async (req: Request, res: Response) => {
-	res.cookie("token", "", {
+	res.cookie("accessToken", "", {
 		expires: new Date(Date.now()),
 		httpOnly: true,
 	});

@@ -35,7 +35,13 @@ export enum UserRoles {
 }
 
 // token payload
-export type PayloadType = Pick<UserModelType, "_id" | "role" | "name">;
+// export type PayloadType = Pick<UserModelType, "_id" | "role" | "name">;
+export type PayloadType = {
+	_id: string;
+	role: UserRoles;
+	name: string;
+	refreshPayload?: string;
+};
 
 export type ExpressRequest = RequestHandler<{ id: string }>;
 
@@ -127,3 +133,12 @@ export interface OrderType extends mongoose.Document {
 }
 
 export type OrderBody = Pick<OrderType, "tax" | "shippingFee" | "orderItems">;
+
+// refresh Token Type
+export interface TokenType extends mongoose.Document {
+	refreshToken: string;
+	ip: string;
+	userAgent: string;
+	isValid: boolean;
+	user: UserModelType["_id"];
+}

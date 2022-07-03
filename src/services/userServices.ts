@@ -1,6 +1,8 @@
+import { TokenType } from "./../types/typeDefinitions";
 import { DocumentDefinition, FilterQuery, UpdateQuery } from "mongoose";
 import UserModel from "../models/user";
 import { UserModelType } from "../types/typeDefinitions";
+import Token from "../models/token";
 
 export const registerUser = async (
 	input: DocumentDefinition<
@@ -8,6 +10,12 @@ export const registerUser = async (
 	>
 ) => {
 	return UserModel.create(input);
+};
+
+export const createRefreshToken = async (
+	input: Pick<TokenType, "refreshToken" | "user" | "ip" | "userAgent">
+) => {
+	return Token.create(input);
 };
 
 export const loginUser = async (query: Pick<UserModelType, "email">) => {
