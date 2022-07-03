@@ -54,9 +54,9 @@ UserSchema.pre("save", async function () {
 UserSchema.methods.comparePassword = async function (
 	password: string
 ): Promise<boolean> {
-	let user = this as UserModelType;
+	// let user = this as UserModelType;
 
-	const isMatched = await bcrypt.compare(password, user.password);
+	const isMatched = await bcrypt.compare(password, this.password);
 	return isMatched;
 };
 

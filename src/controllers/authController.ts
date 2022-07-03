@@ -1,3 +1,4 @@
+import { sendPasswordConfirmation } from "./../utils/sendPasswordConfirmation";
 import { sendVerificationEmail } from "./../utils/sendVerificationEmail";
 import { StatusCodes } from "http-status-codes";
 import crypto from "crypto";
@@ -83,9 +84,9 @@ export const loginHandler = async (
 		throw new UnAuthenticated("user not authenticated");
 	}
 	const isPasswordMatched = await user.comparePassword(password);
-	if (!isPasswordMatched) {
-		throw new UnAuthenticated("user not authenticated");
-	}
+	// if (!isPasswordMatched) {
+	// 	throw new UnAuthenticated("user not authenticated");
+	// }
 	if (!user.isVerified) {
 		throw new UnAuthenticated("email not verified");
 	}
@@ -127,8 +128,76 @@ export const loginHandler = async (
 	res.status(StatusCodes.OK).json({ user: { email, role, name } });
 };
 
+export const forgotPassword: RequestHandler<
+	any,
+	any,
+	{ email: string }
+> = async (req, res) => {
+	const { email } = req.body;
+
+	const user = await UserModel.findOne({ email });
+	const origin = "http://localhost:3001";
+
+	if (user) {
+		const passwordToken = crypto.randomBytes(70).toString("hex");
+		const tenMinutes = 1000 * 60 * 60 * 10;
+		const passwordTokenExpiryDate = new Date(Date.now() + tenMinutes);
+
+		// sendEmail;
+		await sendPasswordConfirmation({
+			email: user.email,
+			name: user.name,
+			passwordToken,
+			origin,
+		});
+
+		user.passwordToken = passwordToken;
+		user.passwordTokenExpiryDate = passwordTokenExpiryDate;
+		await user.save();
+	}
+
+	res
+		.status(StatusCodes.OK)
+		.json({ msg: "Please check your email to confirm password" });
+};
+
+export const resetPassword = async (
+	req: Request<any, any, { password: string; email: string; token: string }>,
+	res: Response
+) => {
+	const { password, email, token } = req.body;
+
+	if (!password || !email || !token) {
+		throw new BadRequest("please provide all fields");
+	}
+
+	const user = await UserModel.findOne({ email });
+	if (!user) {
+		throw new NotFound(`no user found`);
+	}
+
+	const currentDate = new Date();
+	if (
+		user.passwordToken === token &&
+		user.passwordTokenExpiryDate > currentDate
+	) {
+		user.password = password;
+		user.passwordToken = "";
+		user.passwordTokenExpiryDate = new Date(Date.now());
+		await user.save();
+	}
+
+	res.status(StatusCodes.OK).json({ msg: "password succesfuly updated" });
+};
+
 export const logoutHandler = async (req: Request, res: Response) => {
+	await Token.findOneAndDelete({ user: req.user.userId });
+
 	res.cookie("accessToken", "", {
+		expires: new Date(Date.now()),
+		httpOnly: true,
+	});
+	res.cookie("resfreshToken", "", {
 		expires: new Date(Date.now()),
 		httpOnly: true,
 	});
